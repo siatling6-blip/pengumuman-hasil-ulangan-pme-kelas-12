@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengumuman Hasil Ulangan Akhir Semester</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(to bottom right, #e9f5e9, #fff7e6);
+        margin: 0;
+        padding: 0;
+        color: #2c3e50;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 80px auto;
+        background: #fffef8;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #2e7d32;
+        font-size: 26px;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        color: #388e3c;
+        font-size: 16px;
+        font-weight: normal;
+        margin-bottom: 30px;
+      }
+
+      input,
+      select,
+      button {
+        width: 80%;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: 1px solid #c5e1a5;
+        font-size: 15px;
+      }
+
+      button {
+        background: #66bb6a;
+        color: white;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #57a05c;
+      }
+
+      .result {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .score-box {
+        background: #f1f8e9;
+        border: 2px solid #aed581;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .motivasi {
+        font-style: italic;
+        color: #2e7d32;
+        margin-top: 10px;
+      }
+
+      .back-btn {
+        background: #8bc34a;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="mainPage">
+      <h1>Pengumuman Hasil Ulangan Akhir Semester</h1>
+      <h2>Mata Pelajaran: Pendidikan Moral dan Etika<br /></h2>
+
+      <input type="text" id="namaInput" placeholder="Masukkan Nama Lengkap" />
+      <select id="kelasInput">
+        <option value="">Pilih Kelas</option>
+        <option>XII AKL 1</option>
+        <option>XII AKL 2</option>
+        <option>XII PM 1</option>
+        <option>XII PM 2</option>
+        <option>XII PM 3</option>
+        <option>XII TJKT</option>
+      </select>
+      <button onclick="cariNilai()">Lihat Hasil</button>
+    </div>
+
+    <div class="container result" id="hasilPage">
+      <h1>Hasil Ulanganmu</h1>
+      <div class="score-box">
+        <h3 id="hasilNama"></h3>
+        <p id="hasilKelas"></p>
+        <h2 id="hasilNilai"></h2>
+        <p class="motivasi" id="pesanMotivasi"></p>
+      </div>
+      <button class="back-btn" onclick="kembali()">Kembali</button>
+    </div>
+
+    <script>
+      const dataSiswa = {
+        "CLORENSYA CATRIEN": "98.5|XII AKL 2",
+        "CELSI OLIVIA": "28.5|XII AKL 2",
+        "BUI CHIAN": "64|XII AKL 2",
+        "ANGELIA LING ARMANDA": "95.5|XII AKL 2",
+        "ALDY HERIANUS": "73|XII AKL 2",
+        "AGUS SUCIANTO": "65.5|XII AKL 2",
+        "BONG JUN JUN": "79|XII AKL 2",
+        "APRILIABLE KIRA MANSARI": "76.5|XII AKL 2",
+        REINSWIS: "78.5|XII PM 2",
+        YESSIKA: "77.5|XII PM 3",
+        "ANISA PUTRI": "88|XII AKL 2",
+        "WENSY FRANSISKA FAM": "49|XII PM 3",
+        SUMARNI: "64.5|XII PM 3",
+        STEVEN: "65|XII PM 3",
+        RICOBEN: "58.5|XII PM 1",
+        "DAVIN KURNIAWAN": "75|XII AKL 1",
+        DESVITA: "72|XII AKL 2",
+        CINDY: "97|XII AKL 2",
+        "ELLEN NG": "73|XII AKL 2",
+        "DOVIN GERVINO": "57.5|XII TJKT",
+        "CHARLES FERNANDO": "97|XII TJKT",
+        "CIA CIA": "63|XII TJKT",
+        CHRISTIAN: "67|XII TJKT",
+        "CALVIN GREVANDO": "47|XII TJKT",
+        "BRIAN FERNALDY": "67|XII TJKT",
+        "AUGUSTIAN ANTHONY": "60|XII TJKT",
+        "ANGEL VALENCIA": "77|XII TJKT",
+        "ALEX NELSON": "21.5|XII TJKT",
+        ADRIAN: "50|XII TJKT",
+        "CECILIA ALIM": "51|XII PM 2",
+        "DESIA FELLISA": "59|XII PM2",
+        BRENDA: "57|XII PM 2",
+        "ALDY MONTOLALU": "51|XII PM 2",
+        ANDI: "88|XII PM 2",
+        ANDREAS: "57|XII PM 2",
+        ANTHONY: "70|XII PM2",
+        "ANGEL CAROLINE": "51.5|XII PM 1",
+        "BONG JIU NIE": "85|XII PM 1",
+        BRIANHO: "61.5|XII PM 1",
+        "CHARLES OWEN": "63|XII PM 1",
+        "CIN HONG": "63|XII PM 1",
+        CYNTHIA: "76|XII PM 1",
+        ELVIS: "64|XII PM 1",
+        "ERICK FEBRIAN": " 58.5|XII PM 1",
+        FENDI: " 54|XII PM 1",
+        FIKA: "54|XII PM 1",
+        "FUK SIN": "49|XII PM 1",
+        "HARDWIN EDISON ANDREAS": "77.5|XII PM 1",
+        "HENGKI AGUSTIAN": "45.5|XII PM 1",
+        KHELY: "58|XII PM 1",
+        "LIM FEN SIE": "75|XII PM 1",
+        "LIT PHIN": " 67|XII PM 1",
+        "JIU SAN": " 56|XII PM 1",
+        "JIU THING": "93|XII TJKT",
+        JUIVIT: "36|XII TJKT",
+        JUSTIN: "48|XII TJKT",
+        "KEVIN GUNAWAN": "48|XII TJKT",
+        "KHEYSHIA MARCELLINA": "69|XII TJKT",
+        "LEON JONATHAN": "55|XII TJKT",
+        "LORIS CAPIROSSI": "44|XII TJKT",
+        MEIHANDY: "38|XII TJKT",
+        "NATHANAEL EVANS S.M": "51|XII TJKT",
+        RADO: "49|XII TJKT",
+        ROONY: "65|XII TJKT",
+        "SAN KIUN": "31|XII TJKT",
+        "SU FONG": " 53|XII TJKT",
+        "SUN LI": "54|XII TJKT",
+        "TRISHA FLORENCE": "60|XII TJKT",
+        "VINCENT DARLIUS": "53|XII TJKT",
+        "WING SHI": "37|XII TJKT",
+        "FELISITAS ALVERINA": "98.5|XII AKL 2",
+        "EKI YOLANDA": "52|XII AKL 2",
+        RICO: "57|XII PM 1",
+        "CHRISTINE ANGEL": "83.5|XII AKL 2",
+        FREDDY: "51|XII PM 3",
+        "WELLY AGUSTIAN": "60|XII AKL 2",
+        "WELSON FEBRIO": " 22|XII AKL 1",
+        "VINCENT ERNESTINE": "76|XII AKL 1",
+        "ELEN MELCELLA": "71.5|XII PM 3",
+        VALENTINO: "45|XII AKL 1",
+        RICARDO: " 57.5|XII PM 1",
+        "CHRISTIN TJIN JI THING": "72|XII PM 3",
+        "CHENTIA METTA YURIKA": "72.5| XII PM 3",
+        CHELVIA: "63.5|XII PM 3",
+        CHELSY: "79|XII PM 3",
+        ANTHONY: "75|XII PM 3",
+        "ANGELLIA FLORESITA": "63.5|XII PM 3",
+        DENY: "77.5|XII PM 3",
+        ALBERT: "63|XII PM 3",
+        "YENY SEPTIANI": "75|XII PM 2",
+        "VIDI WIJAYA": "67|XII PM 2",
+        "VIRGO AGUSTYAN": "81|XII PM 2",
+        "KEVIN FERRIANTO": " 91|XII PM 2",
+        KELVIN: "47|XII PM 2",
+        "GISELA AYLEN": "81.5|XII PM 2",
+        "JUNIA ANGEL": "88|XII PM 2",
+        "SINTIA COU": "53.5|XII PM 2",
+        "CHIN LOIS": "62|XII PM 2",
+        "SIAU LING LING": "83.5|XII PM 2",
+        "SILVI SOFIA": "92.5|XII PM 2",
+        KENDRICK: " 65| XII PM 3",
+        SHINTRYA: "46.5|XII PM 2",
+        "KRISTIAN ROBEN": "64.5|XII PM 3",
+        KESIA: "63|XII PM 2",
+        "RIO SANTOSO": "59.5|XII PM 2",
+        VITA: " 46.5|XII PM 1",
+        "RENDY ": "62|XII PM 2",
+        VINSON: " 72|XII PM 1",
+        "VERONICA LEE": "69|XII PM 1",
+        VELECIA: "77|XII PM 1",
+        "TAN TAN": "77.5|XII PM 1",
+        MELLISSA: "53|XII PM 2",
+        "SULY SAPUTRI": "80|XII PM 1",
+        "STEVANNY ANANTA": "65.5|XII PM 1",
+        "MUN SAN": "49|XII PM 1",
+        "MERCY FELICA XHIAUW": "85|XII AKL 1",
+        KEVIN: "61|XII PM 2",
+        "KUI CHOI": "56|XII PM 3",
+        KALUN: "72| XII PM 2",
+        "FRANKIE ELLEN": "52|XII PM 2",
+        "DWI MELIANI": "42|XII TJKT",
+        HANY: "88|XII PM 3",
+        "FELIX CHANDRA": "94|XII PM 3",
+        RIANI: "56.5|XII PM 3",
+        "CHELSEA OLIVIA": "65.5|XII AKL 1",
+        "BRENDA MHEY": "55.5|XII AKL 1",
+        "ARCHY VERLYE GRASCEA": "50.5|XII AKL 1",
+        "A SIAN": "79|XII AKL 1",
+        "SOFIE STEFANIE": "65.5|XII PM 3",
+        FLORA: "94| XII AKL 2",
+        JONLY: "91|XII AKL 2",
+        "HERLAMBANG BUDI SANGKONO": "70.5|XII AKL 2",
+        SHERLY: "72.5|XII AKL 2",
+        SENIYANTI: "73.5|XII PM 2",
+        OKTAVIA: "56|XII PM 2",
+        NICKY: " 77.5|XII PM 2",
+        OKTAVIA: "41.5|XII PM 1",
+        SUFI: "95.5|XII AKL 2",
+        "LOUIS MARCHVIN": "85.5|XII PM 2",
+        "SANTI YULIANTI": "95|XII AKL 2",
+        "PING PING": "78.5|XII PM 1",
+        "WILLIAM WONG": "86.5|XII AKL 1",
+        "ALEXANDRE CHRISTIE": "73|XII AKL 1",
+        "CINDY DEWITA": "88.5|XII AKL 1",
+        FRANKY: "62|XII AKL 1",
+        "JENIFER LIU": "89.5|XII AKL 1",
+        "JERRY PUI": "94.5|XII AKL 1",
+        "KEVIN MULIAWAN": " 73.5|XII AKL 1",
+        "KHIET JIU": "63|XII AKL 1",
+        LAURA: "94|XII AKL 1",
+        "LIE MUNG": "86| XII AKL 1",
+        MELLY: "73.5 |XII AKL 1",
+        "JOSHUA NATHAN": "57|XII AKL 2",
+        JULITA: " 91| XII AKL 2",
+        "KELLY NOVELITA": "70|XII AKL 2",
+        LENY: "94|XII AKL 2",
+        "LIONIL SIAUPUTRA": "70|XII AKL 2",
+        "MELISA CLAUDIA": " 73.5|XII AKL 2",
+        OKTAPIA: "40|XII AKL 2",
+        RENO: "67.5| XII AKL 2",
+        "RIAN VISKA": " 93| XII AKL 2",
+        "VANIA ANGELICA": "91|XII AKL 2",
+        "VICKY LAUNARDY": "63| XII AKL 2",
+        YERIKO: "75|XII AKL 1",
+        "RIONALDO FRANSISCO": "62.5| XII PM 1",
+        "SHAN HO": "75| XII PM 1",
+        OKTAVIA: "60.5| XII PM 3",
+        RAINY: "67| XII PM 3",
+        ROSALYNDA: "82|XII PM 1",
+        "JOHAN ELVIS GUNAWAN": "54.5|XII PM 3",
+        KELWIN: "32.5|XII PM 3",
+        "RIVAL FAHREZA": "63|XII PM 3",
+        "MERCYA HEARTYN": "66|XII PM 3",
+        "LIE CHUI MIE": "68.5|XII PM 3",
+        "JIU LI": " 56|XII TJKT",
+        "JENNIFER VILLYIHA": "48.5|XII TJKT",
+        JELLYA: "65.5|XII TJKT",
+        "FIOREN ALESSIA": "92.5|XII TJKT",
+        "FIOREN EVELYN": "86.5|XII TJKT",
+        "FIVIA NIARTI": "72|XII TJKT",
+        GUNAWAN: "46| XII TJKT",
+        "HOKIGAWA NGUI ARISTA": "31.5| XII TJKT",
+        MERRY: "88|XII AKL 1",
+        "MIAU LING": "81|XII AKL 1",
+        "NIRMALA RISYA ISLAMI": "86.5|XII AKL 1",
+        NITA: "78|XII AKL 1",
+        "RENO HERYANTO": " 73.5|XII AKL 1",
+        RIO: "67.5|XII AKL 1",
+        SOFIYANI: "72|XII AKL 1",
+        SERVIA: "82|XII AKL 1",
+        FELICIA: " 68.5|XII PM 3",
+        "RISKA TRIHARTANTI": "92.5|XII AKL 1",
+        "LOUIS LIE": "67|XII PM 2",
+        "CHRISTIAN VINCENT ANTONI": "66|XII PM 3",
+        VAREN: "63|XII PM 2",
+        "STEVEN AGUSTIAN": "54.5|XII PM 2",
+        "STEFFANIE ALMER": "88|XII AKL 1",
+        "DYLAN MARCZELL SETIAWAN": "61.5|XII PM 3",
+        ANGEL: "61.5|XII PM 3",
+      };
+
+      function cariNilai() {
+        const nama = document
+          .getElementById("namaInput")
+          .value.trim()
+          .toUpperCase();
+        const kelas = document.getElementById("kelasInput").value;
+        const hasilDiv = document.getElementById("hasilPage");
+        const mainDiv = document.getElementById("mainPage");
+
+        if (nama === "" || kelas === "") {
+          alert("Harap isi nama dan pilih kelas!");
+          return;
+        }
+
+        let found = false;
+        for (const key in dataSiswa) {
+          const [nilai, kelasData] = dataSiswa[key].split("|");
+          if (key === nama && kelasData === kelas) {
+            found = true;
+            mainDiv.style.display = "none";
+            hasilDiv.style.display = "block";
+            document.getElementById("hasilNama").innerText = key;
+            document.getElementById("hasilKelas").innerText = kelasData;
+            document.getElementById("hasilNilai").innerText = "Nilai: " + nilai;
+
+            let motivasi = "";
+            if (nilai >= 90) motivasi = "Luar biasa! Pertahankan semangat !";
+            else if (nilai >= 75) motivasi = "Bagus! Terus tingkatkan .";
+            else
+              motivasi =
+                "Jangan menyerah! Setiap tantangan adalah kesempatan untuk tumbuh bersama.";
+
+            document.getElementById("pesanMotivasi").innerText = motivasi;
+            break;
+          }
+        }
+
+        if (!found) {
+          alert("Data tidak ditemukan. Periksa kembali nama dan kelas.");
+        }
+      }
+
+      function kembali() {
+        document.getElementById("hasilPage").style.display = "none";
+        document.getElementById("mainPage").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
